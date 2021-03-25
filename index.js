@@ -41,22 +41,35 @@ client.connect(err => {
   })
 
     // const product = {name: "honey", price: 25, quantity: 20};
-  app.post("/addProduct", (req, res) =>{
+  //CREATE
+    app.post("/addProduct", (req, res) =>{
       const product = req.body;
     //   console.log(product);
       productCollection.insertOne(product)
       .then(result=>{
           console.log('product added successfully');
-          res.send('success');
+          res.redirect('/');
       })
   })
+
+  //PATCH or UPDATE
+  app.patch('/update/:id', (req,res) =>{
+    productCollection.updateOne({_id:ObjectId(req.params.id)},
+    {
+      $set: {price: req.body.price, quantity: req.body.quantity}
+    })
+    .then(result =>{
+      console.log(result)
+    })
+  })
+
 
 // DELETE
 app.delete('/delete/:id', (req, res)=>{
   // console.log(req.params.id);
   productCollection.deleteOne({_id: ObjectId(req.params.id)})
   .then(( result)=>{
-    console.log(result);
+    res.send(result.deletedCount > 0);
   })
 })
 
